@@ -26,8 +26,7 @@ yafapi接口
 
 ## 版权信息
 
-
-版权所有Copyright © 2006-2016 by  (http://phpst.cn.com)
+版权所有Copyright © 2006-2017 by xushuhui  (http://www.phpst.cn)
 
 All rights reserved。
 
