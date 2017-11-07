@@ -1,5 +1,5 @@
 
-yafapi接口
+YafApi接口,兼具yaf的简洁速度和thinkPHP的简单易上手，专门用来开发api。
 
 ### 目录和文件
 
