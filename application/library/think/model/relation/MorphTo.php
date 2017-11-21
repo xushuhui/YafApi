@@ -13,7 +13,7 @@ namespace think\model\relation;
 
 use think\Exception;
 use think\Loader;
-use think\Model;
+use think\Think;
 use think\model\Relation;
 
 class MorphTo extends Relation
@@ -34,7 +34,7 @@ class MorphTo extends Relation
      * @param array  $alias     多态别名定义
      * @param string $relation  关联名
      */
-    public function __construct(Model $parent, $morphType, $morphKey, $alias = [], $relation = null)
+    public function __construct(Think $parent, $morphType, $morphKey, $alias = [], $relation = null)
     {
         $this->parent    = $parent;
         $this->morphType = $morphType;

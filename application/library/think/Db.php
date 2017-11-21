@@ -1,13 +1,4 @@
 <?php
-// +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>
-// +----------------------------------------------------------------------
 
 namespace think;
 
@@ -67,6 +58,7 @@ class Db
      */
     public static function connect($config = [], $name = false)
     {
+
         if (false === $name) {
             $name = md5(serialize($config));
         }
@@ -79,9 +71,9 @@ class Db
             }
             $class = false !== strpos($options['type'], '\\') ? $options['type'] : '\\think\\db\\connector\\' . ucwords($options['type']);
             // 记录初始化信息
-//            if (App::$debug) {
-//                Log::record('[ DB ] INIT ' . $options['type'], 'info');
-//            }
+           if (APP_DEBUG) {
+                Log::record('[ DB ] INIT ' . $options['type'], 'info');
+           }
             if (true === $name) {
                 return new $class($options);
             } else {
@@ -101,10 +93,10 @@ class Db
     private static function parseConfig($config)
     {
         if (empty($config)) {
-            $config = config('database');
+            $config = Config::get('database.database');
         } elseif (is_string($config) && false === strpos($config, '/')) {
             // 支持读取配置参数
-            $config = config($config);
+            $config = Config::get($config);
         }
         if (is_string($config)) {
             return self::parseDsn($config);

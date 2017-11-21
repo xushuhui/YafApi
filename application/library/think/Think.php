@@ -160,15 +160,17 @@ abstract class Think implements \JsonSerializable, \ArrayAccess
         // 合并数据库配置
         if (!empty($this->connection)) {
             if (is_array($this->connection)) {
-                $connection = array_merge(config('database'), $this->connection);
+                $connection = array_merge(Config::get('database.database'), $this->connection);
             } else {
                 $connection = $this->connection;
             }
+
         } else {
             $connection = [];
         }
 
         $con = Db::connect($connection);
+
         // 设置当前模型 确保查询返回模型对象
         $queryClass = $this->query ?: $con->getConfig('query');
         $query      = new $queryClass($con, $this->class);
@@ -196,10 +198,12 @@ abstract class Think implements \JsonSerializable, \ArrayAccess
      */
     public function getQuery($buildNewQuery = false)
     {
+
         if ($buildNewQuery) {
             return $this->buildQuery();
         } elseif (!isset(self::$links[$this->class])) {
             // 创建模型查询对象
+
             self::$links[$this->class] = $this->buildQuery();
         }
 
@@ -948,6 +952,7 @@ abstract class Think implements \JsonSerializable, \ArrayAccess
             return false;
         }
         $pk = $this->getPk();
+
         if ($this->isUpdate) {
             // 自动更新
             $this->autoCompleteData($this->update);
@@ -1017,9 +1022,9 @@ abstract class Think implements \JsonSerializable, \ArrayAccess
             if (false === $this->trigger('before_insert', $this)) {
                 return false;
             }
-
+            LogWrite($this->data);
             $result = $this->db()->insert($this->data);
-
+            LogWrite($result);
             // 获取自动增长主键
             if ($result && is_string($pk) && (!isset($this->data[$pk]) || '' == $this->data[$pk])) {
                 $insertId = $this->db()->getLastInsID($sequence);

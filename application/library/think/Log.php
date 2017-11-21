@@ -11,7 +11,6 @@
 
 namespace think;
 
-use think\exception\ClassNotFoundException;
 
 /**
  * Class Log
@@ -59,10 +58,10 @@ class Log
         if (class_exists($class)) {
             self::$driver = new $class($config);
         } else {
-            throw new ClassNotFoundException('class not exists:' . $class, $class);
+            throw new Exception('class not exists:' . $class, $class);
         }
         // 记录初始化信息
-        App::$debug && Log::record('[ LOG ] INIT ' . $type, 'info');
+        APP_DEBUG && Log::record('[ LOG ] INIT ' . $type, 'info');
     }
 
     /**
@@ -84,10 +83,7 @@ class Log
     public static function record($msg, $type = 'log')
     {
         self::$log[$type][] = $msg;
-        if (IS_CLI) {
-            // 命令行下面日志写入改进
-            self::save();
-        }
+        self::save();
     }
 
     /**
@@ -130,7 +126,7 @@ class Log
     {
         if (!empty(self::$log)) {
             if (is_null(self::$driver)) {
-                self::init(Config::get('log'));
+                self::init(config('log'));
             }
 
             if (!self::check(self::$config)) {
@@ -139,9 +135,10 @@ class Log
             }
 
             if (empty(self::$config['level'])) {
+
                 // 获取全部日志
                 $log = self::$log;
-                if (!App::$debug && isset($log['debug'])) {
+                if (!APP_DEBUG && isset($log['debug'])) {
                     unset($log['debug']);
                 }
             } else {
@@ -183,10 +180,9 @@ class Log
             return false;
         }
 
-        // 监听log_write
-        Hook::listen('log_write', $log);
+
         if (is_null(self::$driver)) {
-            self::init(Config::get('log'));
+            self::init(config('log'));
         }
         // 写入日志
         $result = self::$driver->save($log);

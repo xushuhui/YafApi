@@ -14,7 +14,7 @@ namespace think\model\relation;
 use think\db\Query;
 use think\Exception;
 use think\Loader;
-use think\Model;
+use think\Think;
 use think\model\Relation;
 
 /**
@@ -168,7 +168,7 @@ abstract class OneToOne extends Relation
      */
     public function save($data)
     {
-        if ($data instanceof Model) {
+        if ($data instanceof Think) {
             $data = $data->getData();
         }
         $model = new $this->model;

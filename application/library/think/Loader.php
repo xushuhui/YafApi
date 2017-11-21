@@ -1,13 +1,4 @@
 <?php
-// +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>
-// +----------------------------------------------------------------------
 
 namespace think;
 
@@ -239,19 +230,6 @@ class Loader
     // 注册自动加载机制
     public static function register($autoload = '')
     {
-        // 注册系统自动加载
-        spl_autoload_register($autoload ?: 'think\\Loader::autoload', true, true);
-        // 注册命名空间定义
-        self::addNamespace([
-            'think'    => LIB_PATH . 'think' . DS,
-            'behavior' => LIB_PATH . 'behavior' . DS,
-            'traits'   => LIB_PATH . 'traits' . DS,
-        ]);
-        // 加载类库映射文件
-        if (is_file(RUNTIME_PATH . 'classmap' . EXT)) {
-            self::addClassMap(__include_file(RUNTIME_PATH . 'classmap' . EXT));
-        }
-
         // Composer自动加载支持
         if (is_dir(VENDOR_PATH . 'composer')) {
             self::registerComposerLoader();
@@ -296,132 +274,9 @@ class Loader
         }
     }
 
-    /**
-     * 导入所需的类库 同java的Import 本函数有缓存功能
-     * @param string $class   类库命名空间字符串
-     * @param string $baseUrl 起始路径
-     * @param string $ext     导入的文件扩展名
-     * @return boolean
-     */
-    public static function import($class, $baseUrl = '', $ext = EXT)
-    {
-        static $_file = [];
-        $key          = $class . $baseUrl;
-        $class        = str_replace(['.', '#'], [DS, '.'], $class);
-        if (isset($_file[$key])) {
-            return true;
-        }
 
-        if (empty($baseUrl)) {
-            list($name, $class) = explode(DS, $class, 2);
 
-            if (isset(self::$prefixDirsPsr4[$name . '\\'])) {
-                // 注册的命名空间
-                $baseUrl = self::$prefixDirsPsr4[$name . '\\'];
-            } elseif ('@' == $name) {
-                //加载当前模块应用类库
-                $baseUrl = App::$modulePath;
-            } elseif (is_dir(EXTEND_PATH . $name)) {
-                $baseUrl = EXTEND_PATH . $name . DS;
-            } else {
-                // 加载其它模块的类库
-                $baseUrl = APP_PATH . $name . DS;
-            }
-        } elseif (substr($baseUrl, -1) != DS) {
-            $baseUrl .= DS;
-        }
-        // 如果类存在 则导入类库文件
-        if (is_array($baseUrl)) {
-            foreach ($baseUrl as $path) {
-                $filename = $path . DS . $class . $ext;
-                if (is_file($filename)) {
-                    break;
-                }
-            }
-        } else {
-            $filename = $baseUrl . $class . $ext;
-        }
 
-        if (!empty($filename) && is_file($filename)) {
-            // 开启调试模式Win环境严格区分大小写
-            if (IS_WIN && pathinfo($filename, PATHINFO_FILENAME) != pathinfo(realpath($filename), PATHINFO_FILENAME)) {
-                return false;
-            }
-            __include_file($filename);
-            $_file[$key] = true;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 实例化（分层）模型
-     * @param string $name         Model名称
-     * @param string $layer        业务层名称
-     * @param bool   $appendSuffix 是否添加类名后缀
-     * @param string $common       公共模块名
-     * @return Object
-     * @throws ClassNotFoundException
-     */
-    public static function model($name = '', $layer = 'model', $appendSuffix = false, $common = 'common')
-    {
-        $guid = $name . $layer;
-        if (isset(self::$instance[$guid])) {
-            return self::$instance[$guid];
-        }
-        if (false !== strpos($name, '\\')) {
-            $class  = $name;
-            $module = Request::instance()->module();
-        } else {
-            if (strpos($name, '/')) {
-                list($module, $name) = explode('/', $name, 2);
-            } else {
-                $module = Request::instance()->module();
-            }
-            $class = self::parseClass($module, $layer, $name, $appendSuffix);
-        }
-        if (class_exists($class)) {
-            $model = new $class();
-        } else {
-            $class = str_replace('\\' . $module . '\\', '\\' . $common . '\\', $class);
-            if (class_exists($class)) {
-                $model = new $class();
-            } else {
-                throw new ClassNotFoundException('class not exists:' . $class, $class);
-            }
-        }
-        self::$instance[$guid] = $model;
-        return $model;
-    }
-
-    /**
-     * 实例化（分层）控制器 格式：[模块名/]控制器名
-     * @param string $name         资源地址
-     * @param string $layer        控制层名称
-     * @param bool   $appendSuffix 是否添加类名后缀
-     * @param string $empty        空控制器名称
-     * @return Object|false
-     * @throws ClassNotFoundException
-     */
-    public static function controller($name, $layer = 'controller', $appendSuffix = false, $empty = '')
-    {
-        if (false !== strpos($name, '\\')) {
-            $class  = $name;
-            $module = Request::instance()->module();
-        } else {
-            if (strpos($name, '/')) {
-                list($module, $name) = explode('/', $name);
-            } else {
-                $module = Request::instance()->module();
-            }
-            $class = self::parseClass($module, $layer, $name, $appendSuffix);
-        }
-        if (class_exists($class)) {
-            return App::invokeClass($class);
-        } elseif ($empty && class_exists($emptyClass = self::parseClass($module, $layer, $empty, $appendSuffix))) {
-            return new $emptyClass(Request::instance());
-        }
-    }
 
     /**
      * 实例化验证类 格式：[模块名/]验证器名
@@ -467,42 +322,7 @@ class Loader
         return $validate;
     }
 
-    /**
-     * 数据库初始化 并取得数据库类实例
-     * @param mixed         $config 数据库配置
-     * @param bool|string   $name 连接标识 true 强制重新连接
-     * @return \think\db\Connection
-     */
-    public static function db($config = [], $name = false)
-    {
-        return Db::connect($config, $name);
-    }
 
-    /**
-     * 远程调用模块的操作方法 参数格式 [模块/控制器/]操作
-     * @param string       $url          调用地址
-     * @param string|array $vars         调用参数 支持字符串和数组
-     * @param string       $layer        要调用的控制层名称
-     * @param bool         $appendSuffix 是否添加类名后缀
-     * @return mixed
-     */
-    public static function action($url, $vars = [], $layer = 'controller', $appendSuffix = false)
-    {
-        $info   = pathinfo($url);
-        $action = $info['basename'];
-        $module = '.' != $info['dirname'] ? $info['dirname'] : Request::instance()->controller();
-        $class  = self::controller($module, $layer, $appendSuffix);
-        if ($class) {
-            if (is_scalar($vars)) {
-                if (strpos($vars, '=')) {
-                    parse_str($vars, $vars);
-                } else {
-                    $vars = [$vars];
-                }
-            }
-            return App::invokeMethod([$class, $action . Config::get('action_suffix')], $vars);
-        }
-    }
 
     /**
      * 字符串命名风格转换

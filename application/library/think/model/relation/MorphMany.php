@@ -14,7 +14,7 @@ namespace think\model\relation;
 use think\db\Query;
 use think\Exception;
 use think\Loader;
-use think\Model;
+use think\Think;
 use think\model\Relation;
 
 class MorphMany extends Relation
@@ -34,7 +34,7 @@ class MorphMany extends Relation
      * @param string $morphType 多态字段名
      * @param string $type      多态类型
      */
-    public function __construct(Model $parent, $model, $morphKey, $morphType, $type)
+    public function __construct(Think $parent, $model, $morphKey, $morphType, $type)
     {
         $this->parent    = $parent;
         $this->model     = $model;
@@ -239,7 +239,7 @@ class MorphMany extends Relation
      */
     public function save($data)
     {
-        if ($data instanceof Model) {
+        if ($data instanceof Think) {
             $data = $data->getData();
         }
         // 保存关联表数据

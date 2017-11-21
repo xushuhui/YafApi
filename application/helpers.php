@@ -4,7 +4,11 @@
  * 2017/10/18
  * 16:37
  */
-
+use think\Cache;
+use think\Config;
+use think\Cookie;
+use think\Db;
+use think\Debug;
 if (!function_exists('config')) {
 	/**
 	 * 获取和设置配置参数
@@ -15,11 +19,8 @@ if (!function_exists('config')) {
 	 */
 	function config($name = '', $value = null)
 	{
-		if(is_null($name)){
-			return \Yaf\Registry::get('config')->toArray();
-		}
 		if (is_null($value) && is_string($name)) {
-			return  (new Yaf\Config\Ini(APPLICATION_PATH.'/conf/application.ini',$name))->toArray();
+			return 0 === strpos($name, '?') ? Config::has(substr($name, 1)) : Config::get($name);
 		}
 	}
 }

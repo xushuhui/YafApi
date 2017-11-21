@@ -32,8 +32,8 @@ class Bootstrap extends Yaf\Bootstrap_Abstract {
 
 	public function _initLoader(Yaf\Dispatcher $dispatcher){
 		//导入一个函数库文件helpers.php，即可使用helpers.php中的函数
-		Yaf\Loader::import(APPLICATION_PATH.'/application/helpers.php');
-		Yaf\Loader::import(APPLICATION_PATH.'/application/common.php');
+		Yaf\Loader::import(APPLICATION_PATH.'/application/Base.php');
+
 
 	}
 
