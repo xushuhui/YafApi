@@ -164,8 +164,6 @@ class Request
         return true === $url ? $this->domain() . $this->baseUrl : $this->baseUrl;
     }
 
-
-
     /**
      * 设置或获取URL访问根地址
      * @access public
