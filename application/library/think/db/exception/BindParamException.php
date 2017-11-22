@@ -9,34 +9,25 @@
 // | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://zjzit.cn>
 // +----------------------------------------------------------------------
 
-namespace think\exception;
-
-use think\Exception;
+namespace think\db\exception;
 
 /**
- * Database相关异常处理类
+ * PDO参数绑定异常
  */
-class DbException extends Exception
+class BindParamException extends DbException
 {
+
     /**
-     * DbException constructor.
-     * @param string    $message
-     * @param array     $config
-     * @param string    $sql
-     * @param int       $code
+     * BindParamException constructor.
+     * @param string $message
+     * @param array  $config
+     * @param string $sql
+     * @param array    $bind
+     * @param int    $code
      */
-    public function __construct($message, array $config, $sql, $code = 10500)
+    public function __construct($message, $config, $sql, $bind, $code = 10502)
     {
-        $this->message = $message;
-        $this->code    = $code;
-
-        $this->setData('Database Status', [
-            'Error Code'    => $code,
-            'Error Message' => $message,
-            'Error SQL'     => $sql,
-        ]);
-
-        $this->setData('Database Config', $config);
+        $this->setData('Bind Param', $bind);
+        parent::__construct($message, $config, $sql, $code);
     }
-
 }

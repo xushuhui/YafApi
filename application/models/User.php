@@ -7,6 +7,6 @@
  */
 class UserModel extends BaseModel
 {
-
+    protected $pk = 'uid';
 
 }

@@ -1,10 +1,19 @@
 <?php
+// +----------------------------------------------------------------------
+// | ThinkPHP [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: liu21st <liu21st@gmail.com>
+// +----------------------------------------------------------------------
 
 namespace think\model;
 
 use think\db\Query;
 use think\Exception;
-use think\Model;
+use think\Think;
 
 /**
  * Class Relation
@@ -16,7 +25,7 @@ abstract class Relation
 {
     // 父模型对象
     protected $parent;
-    /** @var  Model 当前关联的模型类 */
+    /** @var  Think 当前关联的模型类 */
     protected $model;
     /** @var Query 关联模型查询对象 */
     protected $query;
@@ -30,7 +39,7 @@ abstract class Relation
     /**
      * 获取关联的所属模型
      * @access public
-     * @return Model
+     * @return Think
      */
     public function getParent()
     {
@@ -38,23 +47,13 @@ abstract class Relation
     }
 
     /**
-     * 获取当前的关联模型类
+     * 获取当前的关联模型类的实例
      * @access public
-     * @return string
+     * @return Think
      */
     public function getModel()
     {
-        return $this->model;
-    }
-
-    /**
-     * 获取关联的查询对象
-     * @access public
-     * @return Query
-     */
-    public function getQuery()
-    {
-        return $this->query;
+        return $this->query->getModel();
     }
 
     /**
@@ -68,12 +67,49 @@ abstract class Relation
         return (new $this->model)->toCollection($resultSet);
     }
 
+    protected function getQueryFields($model)
+    {
+        $fields = $this->query->getOptions('field');
+        return $this->getRelationQueryFields($fields, $model);
+    }
+
+    protected function getRelationQueryFields($fields, $model)
+    {
+        if ($fields) {
+
+            if (is_string($fields)) {
+                $fields = explode(',', $fields);
+            }
+
+            foreach ($fields as &$field) {
+                if (false === strpos($field, '.')) {
+                    $field = $model . '.' . $field;
+                }
+            }
+        } else {
+            $fields = $model . '.*';
+        }
+
+        return $fields;
+    }
+
+    protected function getQueryWhere(&$where, $relation)
+    {
+        foreach ($where as $key => $val) {
+            if (is_string($key)) {
+                $where[] = [false === strpos($key, '.') ? $relation . '.' . $key : $key, '=', $val];
+                unset($where[$key]);
+            }
+        }
+    }
+
     /**
      * 执行基础查询（仅执行一次）
      * @access protected
      * @return void
      */
-    abstract protected function baseQuery();
+    protected function baseQuery()
+    {}
 
     public function __call($method, $args)
     {
@@ -81,13 +117,9 @@ abstract class Relation
             // 执行基础查询
             $this->baseQuery();
 
-            $result = call_user_func_array([$this->query, $method], $args);
-            if ($result instanceof Query) {
-                return $this;
-            } else {
-                $this->baseQuery = false;
-                return $result;
-            }
+            $result = call_user_func_array([$this->query->getModel(), $method], $args);
+
+            return $result === $this->query ? $this : $result;
         } else {
             throw new Exception('method not exists:' . __CLASS__ . '->' . $method);
         }

@@ -9,28 +9,24 @@
 // | Author: yunwuxin <448901948@qq.com>
 // +----------------------------------------------------------------------
 
-namespace think\exception;
+namespace think\db\exception;
 
-class HttpException extends \RuntimeException
+class ClassNotFoundException extends \RuntimeException
 {
-    private $statusCode;
-    private $headers;
-
-    public function __construct($statusCode, $message = null, \Exception $previous = null, array $headers = [], $code = 0)
+    protected $class;
+    public function __construct($message, $class = '')
     {
-        $this->statusCode = $statusCode;
-        $this->headers    = $headers;
-
-        parent::__construct($message, $code, $previous);
+        $this->message = $message;
+        $this->class   = $class;
     }
 
-    public function getStatusCode()
+    /**
+     * 获取类名
+     * @access public
+     * @return string
+     */
+    public function getClass()
     {
-        return $this->statusCode;
-    }
-
-    public function getHeaders()
-    {
-        return $this->headers;
+        return $this->class;
     }
 }
