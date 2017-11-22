@@ -1,18 +1,8 @@
 <?php
-// +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2006-2016 http://thinkphp.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: yunwuxin <448901948@qq.com>
-// +----------------------------------------------------------------------
 
 namespace think\exception;
 
 use Exception;
-use think\App;
 use think\Config;
 use think\console\Output;
 use think\Lang;
@@ -36,7 +26,7 @@ class Handle
     {
         if (!$this->isIgnoreReport($exception)) {
             // 收集异常数据
-            if (App::$debug) {
+            if (APP_DEBUG) {
                 $data = [
                     'file'    => $exception->getFile(),
                     'line'    => $exception->getLine(),
@@ -87,7 +77,7 @@ class Handle
      */
     public function renderForConsole(Output $output, Exception $e)
     {
-        if (App::$debug) {
+        if (APP_DEBUG) {
             $output->setVerbosity(Output::VERBOSITY_DEBUG);
         }
         $output->renderException($e);
@@ -101,7 +91,7 @@ class Handle
     {
         $status   = $e->getStatusCode();
         $template = Config::get('http_exception_template');
-        if (!App::$debug && !empty($template[$status])) {
+        if (!APP_DEBUG && !empty($template[$status])) {
             return Response::create($template[$status], 'view', $status)->assign(['e' => $e]);
         } else {
             return $this->convertExceptionToResponse($e);
@@ -115,7 +105,7 @@ class Handle
     protected function convertExceptionToResponse(Exception $exception)
     {
         // 收集异常数据
-        if (App::$debug) {
+        if (APP_DEBUG) {
             // 调试模式，获取详细的错误信息
             $data = [
                 'name'    => get_class($exception),
@@ -144,10 +134,10 @@ class Handle
                 'message' => $this->getMessage($exception),
             ];
 
-            if (!Config::get('show_error_msg')) {
-                // 不显示详细错误信息
-                $data['message'] = Config::get('error_message');
-            }
+//            if (!Config::get('show_error_msg')) {
+//                // 不显示详细错误信息
+//                $data['message'] = Config::get('error_message');
+//            }
         }
 
         //保留一层
@@ -159,7 +149,8 @@ class Handle
 
         ob_start();
         extract($data);
-        include Config::get('exception_tmpl');
+
+        include Config::get('common')['exception_tmpl'];
         // 获取并清空缓存
         $content  = ob_get_clean();
         $response = new Response($content, 'html');
@@ -200,9 +191,6 @@ class Handle
     protected function getMessage(Exception $exception)
     {
         $message = $exception->getMessage();
-        if (IS_CLI) {
-            return $message;
-        }
 
         if (strpos($message, ':')) {
             $name    = strstr($message, ':', true);

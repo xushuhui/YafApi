@@ -29,7 +29,13 @@ function p($data,$die = false)
 	}
 
 }
-
+function LogWrite($logs = '', $label =  '', $fileName =  '')
+{
+	$file_name = APPLICATION_PATH . date('Y-m-d') . '.txt';
+	$now_time = date('Y-m-d H:i:s');
+	$log_message = "[$now_time]:" . $label . var_export($logs, true) . PHP_EOL;
+	file_put_contents($file_name, $log_message, FILE_APPEND);
+}
 //获取随机码
 function getRandCode($max=0)
 {

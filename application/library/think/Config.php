@@ -56,12 +56,14 @@ class Config
         }
         if (!strpos($name, '.')) {
             $name = strtolower($name);
-            return self::parse(self::$config_name,$name)->toArray();
+            $config = self::parse(self::$config_name,$name);
+            return $config->toArray();
         } else {
             // 二维数组设置和获取支持
             $name    = explode('.', $name, 2);
             $name[0] = strtolower($name[0]);
-            return self::parse($name[0],$name[1])->toArray();
+            $config = self::parse($name[0],$name[1]);
+            return $config->toArray();
         }
     }
 

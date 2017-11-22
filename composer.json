@@ -1,0 +1,23 @@
+
+{
+  "name": "xushuhui1992/YafApi",
+  "description": "a Yaf framework for API ",
+  "keywords": ["framework","Yaf","API"],
+  "homepage": "https://github.com/xushuhui1992/YafApi",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "xushuhui",
+      "email": "474497097@qq.com",
+      "homepage": "https://www.phpst.cn",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "laruence/yaf": ">3.0"
+  },
+  "autoload": {
+    "psr-4": { "Loading\\": "" }
+  }
+}
