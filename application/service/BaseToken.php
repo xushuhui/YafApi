@@ -9,6 +9,10 @@ namespace service;
 use think\Cache;
 class BaseToken
 {
+	public function test()
+	{
+		return '12';
+	}
 	//生成令牌
 	public static function generateToken()
 	{

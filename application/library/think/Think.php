@@ -149,11 +149,11 @@ abstract class Think implements \JsonSerializable, \ArrayAccess
         if (is_null($this->resultSetType)) {
             $this->resultSetType = $config['resultset_type'];
         }
-
-        if (is_null($this->query)) {
-            // 设置查询对象
-            $this->query = $config['query'];
-        }
+//       2017.11.29 xushuhui 修改配置文件
+//        if (is_null($this->query)) {
+//            // 设置查询对象
+//            $this->query = $config['query'];
+//        }
 
         if (!empty($this->connection) && is_array($this->connection)) {
             // 设置模型的数据库连接

@@ -82,7 +82,7 @@ class Lang
         foreach ($file as $_file) {
             if (is_file($_file)) {
                 // 记录加载信息
-                App::$debug && Log::record('[ LANG ] ' . $_file, 'info');
+                //App::$debug && Log::record('[ LANG ] ' . $_file, 'info');
                 $_lang = include $_file;
                 if (is_array($_lang)) {
                     $lang = array_change_key_case($_lang) + $lang;
@@ -164,7 +164,7 @@ class Lang
             // 自动侦测浏览器语言
             preg_match('/^([a-z\d\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
             $langSet     = strtolower($matches[1]);
-            $acceptLangs = Config::get('header_accept_lang');
+            //$acceptLangs = Config::get('header_accept_lang');
             if (isset($acceptLangs[$langSet])) {
                 $langSet = $acceptLangs[$langSet];
             } elseif (isset(self::$acceptLanguage[$langSet])) {
