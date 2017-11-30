@@ -13,6 +13,8 @@ function p($data,$die = false)
 		$show_data            = $data ? 'true': 'false';
 	}elseif (is_null($data)) {
 		$show_data            = 'null';
+	}elseif(is_object($data)){
+		$show_data = print_r($data,true);
 	}
 	elseif ($data == ''){
 		$show_data            = "''";
