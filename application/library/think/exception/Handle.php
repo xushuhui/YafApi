@@ -12,7 +12,6 @@
 namespace think\exception;
 
 use Exception;
-use think\App;
 use think\Config;
 
 use think\Log;
@@ -90,7 +89,7 @@ class Handle
     {
         $status   = $e->getStatusCode();
         $template = Config::get('http_exception_template');
-        if (!App::$debug && !empty($template[$status])) {
+        if (!APP_DEBUG && !empty($template[$status])) {
             return Response::create($template[$status], 'view', $status)->assign(['e' => $e]);
         } else {
             return $this->convertExceptionToResponse($e);

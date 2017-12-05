@@ -2394,7 +2394,7 @@ class Query
 
         if (isset($options['order'])) {
             if ($this->config['debug']) {
-                throw new DbException('chunk not support call order');
+                throw new Exception('chunk not support call order');
             }
             unset($options['order']);
         }

@@ -99,7 +99,12 @@ class Error
         static $handle;
         if (!$handle) {
             // 异常处理handle
-            $handle = new Handle;
+            $class = Config::get('application.common')['exception_handle'];
+            if ($class && class_exists($class) && is_subclass_of($class, "\\think\\exception\\Handle")) {
+                $handle = new $class;
+            } else {
+                $handle = new Handle;
+            }
         }
         return $handle;
     }
