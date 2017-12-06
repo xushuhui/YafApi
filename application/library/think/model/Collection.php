@@ -51,7 +51,7 @@ class Collection extends BaseCollection
     public function hidden($hidden = [], $override = false)
     {
         $this->each(function ($model) use ($hidden, $override) {
-            /** @var Model $model */
+            /** @var Think $model */
             $model->hidden($hidden, $override);
         });
 
@@ -67,7 +67,7 @@ class Collection extends BaseCollection
     public function visible($visible = [], $override = false)
     {
         $this->each(function ($model) use ($visible, $override) {
-            /** @var Model $model */
+            /** @var Think $model */
             $model->visible($visible, $override);
         });
 
@@ -84,7 +84,7 @@ class Collection extends BaseCollection
     public function append($append = [], $override = false)
     {
         $this->each(function ($model) use ($append, $override) {
-            /** @var Model $model */
+            /** @var Think $model */
             $model && $model->append($append, $override);
         });
 
