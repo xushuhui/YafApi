@@ -8,8 +8,7 @@ Github地址 (https://www.phpst.cn)
 码云地址 (https://gitee.com/xushuhui/YafApi)
 
 coding地址 (https://git.coding.net/xushuhui/YafApi.git)
-url = git@gitee.com:xushuhui/YafApi.git
-url = git@git.coding.net:xushuhui/YafApi.git
+
 ## 开发计划
 1. 增加请求和响应，配置读取
 2. 增加日志记录，错误和异常处理 （已完成）
