@@ -37,7 +37,6 @@ class Collection extends BaseCollection
     {
         $item = current($this->items);
         $item->eagerlyResultSet($this->items, $relation);
-
         return $this;
     }
 
