@@ -11,14 +11,14 @@
 
 namespace think;
 
-class Request
+class Request extends \Yaf\Request\Http
 {
     /**
      * @var object 对象实例
      */
     protected static $instance;
 
-    protected $method;
+    public $method;
     /**
      * @var string 域名（含协议和端口）
      */
@@ -63,9 +63,9 @@ class Request
      * @var array 当前调度信息
      */
     protected $dispatch = [];
-    protected $module;
-    protected $controller;
-    protected $action;
+    public $module;
+    public $controller;
+    public $action;
     // 当前语言集
     protected $langset;
 
@@ -106,8 +106,7 @@ class Request
 
     protected $content;
 
-    // 全局过滤规则
-    protected $filter;
+
     // Hook扩展方法
     protected static $hook = [];
     // 绑定的属性
@@ -124,15 +123,12 @@ class Request
      * @access protected
      * @param array $options 参数
      */
-    protected function __construct($options = [])
+    public function __construct($options = [])
     {
         foreach ($options as $name => $item) {
             if (property_exists($this, $name)) {
                 $this->$name = $item;
             }
-        }
-        if (is_null($this->filter)) {
-            $this->filter = Config::get('default_filter');
         }
         // 保存 php://input
         $this->input = file_get_contents('php://input');
@@ -498,7 +494,7 @@ class Request
     {
         if (true === $method) {
             // 获取原始请求类型
-            return IS_CLI ? 'GET' : (isset($this->server['REQUEST_METHOD']) ? $this->server['REQUEST_METHOD'] : $_SERVER['REQUEST_METHOD']);
+            return isset($this->server['REQUEST_METHOD']) ? $this->server['REQUEST_METHOD'] : $_SERVER['REQUEST_METHOD'];
         } elseif (!$this->method) {
             if (isset($_POST[Config::get('var_method')])) {
                 $this->method = strtoupper($_POST[Config::get('var_method')]);
@@ -506,7 +502,7 @@ class Request
             } elseif (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
                 $this->method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
             } else {
-                $this->method = IS_CLI ? 'GET' : (isset($this->server['REQUEST_METHOD']) ? $this->server['REQUEST_METHOD'] : $_SERVER['REQUEST_METHOD']);
+                $this->method = isset($this->server['REQUEST_METHOD']) ? $this->server['REQUEST_METHOD'] : $_SERVER['REQUEST_METHOD'];
             }
         }
         return $this->method;
@@ -772,57 +768,7 @@ class Request
         return $this->input($this->request, $name, $default, $filter);
     }
 
-    /**
-     * 获取session数据
-     * @access public
-     * @param string|array  $name 数据名称
-     * @param string        $default 默认值
-     * @param string|array  $filter 过滤方法
-     * @return mixed
-     */
-    public function session($name = '', $default = null, $filter = '')
-    {
-        if (empty($this->session)) {
-            $this->session = Session::get();
-        }
-        if (is_array($name)) {
-            return $this->session = array_merge($this->session, $name);
-        }
-        return $this->input($this->session, $name, $default, $filter);
-    }
 
-    /**
-     * 获取cookie参数
-     * @access public
-     * @param string|array  $name 数据名称
-     * @param string        $default 默认值
-     * @param string|array  $filter 过滤方法
-     * @return mixed
-     */
-    public function cookie($name = '', $default = null, $filter = '')
-    {
-        if (empty($this->cookie)) {
-            $this->cookie = Cookie::get();
-        }
-        if (is_array($name)) {
-            return $this->cookie = array_merge($this->cookie, $name);
-        } elseif (!empty($name)) {
-            $data = Cookie::has($name) ? Cookie::get($name) : $default;
-        } else {
-            $data = $this->cookie;
-        }
-
-        // 解析过滤器
-        $filter = $this->getFilter($filter, $default);
-
-        if (is_array($data)) {
-            array_walk_recursive($data, [$this, 'filterValue'], $filter);
-            reset($data);
-        } else {
-            $this->filterValue($data, $name, $filter);
-        }
-        return $data;
-    }
 
     /**
      * 获取server参数
@@ -1465,21 +1411,7 @@ class Request
         }
     }
 
-    /**
-     * 设置或者获取当前的语言
-     * @access public
-     * @param string $lang 语言名
-     * @return string|Request
-     */
-    public function langset($lang = null)
-    {
-        if (!is_null($lang)) {
-            $this->langset = $lang;
-            return $this;
-        } else {
-            return $this->langset ?: '';
-        }
-    }
+
 
     /**
      * 设置或者获取当前请求的content
@@ -1518,7 +1450,7 @@ class Request
         if ($this->isAjax()) {
             header($name . ': ' . $token);
         }
-        Session::set($name, $token);
+        Cache::set($name, $token);
         return $token;
     }
 

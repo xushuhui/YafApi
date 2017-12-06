@@ -83,7 +83,8 @@ class Log
     public static function record($msg, $type = 'log')
     {
         self::$log[$type][] = $msg;
-        self::save();
+        $res = self::save();
+        return $res;
     }
 
     /**

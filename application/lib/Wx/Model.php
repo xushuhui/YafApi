@@ -27,7 +27,7 @@ class Model
 		}
 		$template.=	"</Articles>
 							</xml> ";
-		echo sprintf($template,$toUser,$fromUser,$time,'news');
+		return sprintf($template,$toUser,$fromUser,$time,'news');
 	}
 	//回复单文本
 	public function responseText($postObj,$content)
@@ -43,7 +43,7 @@ class Model
 		$fromUser = $postObj->ToUserName;
 		$time = time();
 		$msgType = 'text';
-		echo sprintf($template,$toUser,$fromUser,$time,$msgType,$content);
+		return sprintf($template,$toUser,$fromUser,$time,$msgType,$content);
 	}
 	//回复关注
 	public function responseSubscribe(object $postObj,array $content)

@@ -3,19 +3,19 @@ YafApi 1.0
 
 YafApi接口,兼具yaf的简洁速度和thinkPHP的简单易上手，专门用来开发api。
 
-Github地址 (https://www.phpst.cn)
+Github地址 (https://github.com/xushuhui1992/YafApi)
 
 码云地址 (https://gitee.com/xushuhui/YafApi)
 
 coding地址 (https://git.coding.net/xushuhui/YafApi.git)
 
 ## 开发计划
-1. 增加请求和响应，配置读取
+1. 增加请求和响应，配置读取（已完成）
 2. 增加日志记录，错误和异常处理 （已完成）
 3. 完成redis队列功能（放到后期）
 4. 增加orm（已完成）
 5. 增加参数验证 （已完成）
-6. 完善路由功能
+6. 完善路由功能 (待定)
 ## 目录结构
 
 初始的目录结构如下：

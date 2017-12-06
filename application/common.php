@@ -5,12 +5,12 @@
  * 17:44
  */
 
-function LogWrite($logs = '', $label =  '', $fileName =  '')
+function LogWrite($logs)
 {
 	$file_name = APPLICATION_PATH . date('Y-m-d') . '.txt';
 	$now_time = date('Y-m-d H:i:s');
-	$log_message = "[$now_time]:" . $label . var_export($logs, true) . PHP_EOL;
-	file_put_contents($file_name, $log_message, FILE_APPEND);
+	$log_message = "[$now_time]:" . '' . var_export($logs, true) . PHP_EOL;
+	return file_put_contents($file_name, $log_message, FILE_APPEND);
 }
 //获取随机码
 function getRandCode($max=0)
@@ -74,9 +74,7 @@ function curl_upload($url,array $params = array())
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_POST, true);
-
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-
 	if ($error = curl_error($ch) ) {
 		die($error);
 	}
