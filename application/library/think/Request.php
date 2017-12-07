@@ -282,9 +282,7 @@ class Request extends \Yaf\Request\Http
             $this->url = $url;
             return $this;
         } elseif (!$this->url) {
-            if (IS_CLI) {
-                $this->url = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '';
-            } elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
+            if (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
                 $this->url = $_SERVER['HTTP_X_REWRITE_URL'];
             } elseif (isset($_SERVER['REQUEST_URI'])) {
                 $this->url = $_SERVER['REQUEST_URI'];
@@ -328,19 +326,17 @@ class Request extends \Yaf\Request\Http
             return $this;
         } elseif (!$this->baseFile) {
             $url = '';
-            if (!IS_CLI) {
-                $script_name = basename($_SERVER['SCRIPT_FILENAME']);
-                if (basename($_SERVER['SCRIPT_NAME']) === $script_name) {
-                    $url = $_SERVER['SCRIPT_NAME'];
-                } elseif (basename($_SERVER['PHP_SELF']) === $script_name) {
-                    $url = $_SERVER['PHP_SELF'];
-                } elseif (isset($_SERVER['ORIG_SCRIPT_NAME']) && basename($_SERVER['ORIG_SCRIPT_NAME']) === $script_name) {
-                    $url = $_SERVER['ORIG_SCRIPT_NAME'];
-                } elseif (($pos = strpos($_SERVER['PHP_SELF'], '/' . $script_name)) !== false) {
-                    $url = substr($_SERVER['SCRIPT_NAME'], 0, $pos) . '/' . $script_name;
-                } elseif (isset($_SERVER['DOCUMENT_ROOT']) && strpos($_SERVER['SCRIPT_FILENAME'], $_SERVER['DOCUMENT_ROOT']) === 0) {
-                    $url = str_replace('\\', '/', str_replace($_SERVER['DOCUMENT_ROOT'], '', $_SERVER['SCRIPT_FILENAME']));
-                }
+            $script_name = basename($_SERVER['SCRIPT_FILENAME']);
+            if (basename($_SERVER['SCRIPT_NAME']) === $script_name) {
+                $url = $_SERVER['SCRIPT_NAME'];
+            } elseif (basename($_SERVER['PHP_SELF']) === $script_name) {
+                $url = $_SERVER['PHP_SELF'];
+            } elseif (isset($_SERVER['ORIG_SCRIPT_NAME']) && basename($_SERVER['ORIG_SCRIPT_NAME']) === $script_name) {
+                $url = $_SERVER['ORIG_SCRIPT_NAME'];
+            } elseif (($pos = strpos($_SERVER['PHP_SELF'], '/' . $script_name)) !== false) {
+                $url = substr($_SERVER['SCRIPT_NAME'], 0, $pos) . '/' . $script_name;
+            } elseif (isset($_SERVER['DOCUMENT_ROOT']) && strpos($_SERVER['SCRIPT_FILENAME'], $_SERVER['DOCUMENT_ROOT']) === 0) {
+                $url = str_replace('\\', '/', str_replace($_SERVER['DOCUMENT_ROOT'], '', $_SERVER['SCRIPT_FILENAME']));
             }
             $this->baseFile = $url;
         }
@@ -380,11 +376,7 @@ class Request extends \Yaf\Request\Http
                 // 判断URL里面是否有兼容模式参数
                 $_SERVER['PATH_INFO'] = $_GET[Config::get('var_pathinfo')];
                 unset($_GET[Config::get('var_pathinfo')]);
-            } elseif (IS_CLI) {
-                // CLI模式下 index.php module/controller/action/params/...
-                $_SERVER['PATH_INFO'] = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '';
             }
-
             // 分析PATHINFO信息
             if (!isset($_SERVER['PATH_INFO'])) {
                 foreach (Config::get('pathinfo_fetch') as $type) {
