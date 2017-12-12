@@ -23,7 +23,6 @@ class LoginContrller extends Yaf\Controller_Abstract
 		$token = request()->post('token');
 		if(!$token){
 			return json(-1000,'token不允许为空');
-
 		}
 		$valid = UserToken::verifyToken($token);
 		return json(0,'success',['isValid' => $valid]);
